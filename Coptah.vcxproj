@@ -149,12 +149,20 @@
     <ClCompile Include="src\SDLApp.ixx" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="resource.h" />
     <ClInclude Include="src\Config.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="resources\helicopter-spritesheet.png">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-    </Image>
+    <ResourceCompile Include="Coptah.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\helicopter-spritesheet.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ttf1.bin" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="resources\lazy.ttf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -21,6 +21,7 @@
 #include<cmath>
 #include<SDL2/SDL.h>
 #include<windows.h>
+#include"../resource.h"
 #include"Config.hpp"
 
 import SDLApp;
@@ -30,7 +31,6 @@ int Game::instance = 0;
 
 int main(int argc, char* args[]) {
 	using namespace std;
-	
     SDLApp a;
     if (!a.initSDL("Coptah")) {
         exit(1);
