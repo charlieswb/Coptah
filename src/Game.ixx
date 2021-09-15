@@ -37,6 +37,13 @@ public:
 	Game(SDLApp* a) : copter(AObj{ 4, 3, COPTER_SCALE }), rnd(Rand_Int{ 0, SCREEN_HEIGHT - BLOCK_HEIGHT - 1 }){
 		id = ++instance;
         app = a;
+
+        setupAsset();
+
+        copterPos.x = SCREEN_WIDTH / 10;
+        copterPos.y = SCREEN_HEIGHT / 3;
+        copterPos.w = static_cast<int>(COPTER_WIDTH_WO_BLADES * COPTER_SCALE);
+        copterPos.h = static_cast<int>(COPTER_HEIGHT * COPTER_SCALE);
 	}
     void setupAsset() {
         copter.loadFromFile(COPTER_PNG, app->renderer);
@@ -47,17 +54,13 @@ public:
     }
     void setupParams() {
         isGameOver = false;
-        isPaused = true;
+        isPaused = false;
         score = 0;
-
+        
         xVel = INIT_GAME_SPEED;
         yVel = 0;
         yAcc = -INIT_COPTER_SPEED_SHIFT;
-
-        copterPos.x = SCREEN_WIDTH / 10;
-        copterPos.y = SCREEN_HEIGHT / 3;
-        copterPos.w = static_cast<int>(COPTER_WIDTH_WO_BLADES * COPTER_SCALE);
-        copterPos.h = static_cast<int>(COPTER_HEIGHT * COPTER_SCALE);
+        
         blocks.clear();
         blocks.push_back({ SCREEN_WIDTH, SCREEN_HEIGHT / 3, BLOCK_WIDTH, BLOCK_HEIGHT });
 
@@ -166,6 +169,128 @@ public:
         }
 
         return false;
+    }
+
+    bool mainMenuScreen() {
+        app->prepareScene();
+        render(*app, copter, copterPos.x, copterPos.y);
+
+        SDL_Color textColor = { 0, 0, 0 };
+        //SDL_SetRenderDrawColor(app->renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+        //Start Button
+        SDL_Rect startButton;
+        {
+            LTexture startTextTexture;
+            startTextTexture.loadFromRenderedText("Start", textColor, app->renderer, app->gFont);
+            startButton = { SCREEN_WIDTH / 2, SCREEN_HEIGHT/4 - startTextTexture.mHeight/2, startTextTexture.mWidth, startTextTexture.mHeight };
+            //SDL_RenderFillRect(app->renderer, &startButton);
+            render(*app, startTextTexture, startButton.x, startButton.y, NULL);
+        }
+        //Quit Button
+        SDL_Rect quitButton;
+        {
+            LTexture quitTextTexture;
+            quitTextTexture.loadFromRenderedText("Quit", textColor, app->renderer, app->gFont);
+            quitButton = { SCREEN_WIDTH / 2, (SCREEN_HEIGHT - quitTextTexture.mHeight) / 2, quitTextTexture.mWidth, quitTextTexture.mHeight };
+            //SDL_RenderFillRect(app->renderer, &quitButton);
+            render(*app, quitTextTexture, quitButton.x, quitButton.y, NULL);
+        }
+        app->presentScene();
+
+        //std::cout << std::format("startPos <{}, {}>, quitPos <{}, {}>, ", startButton.x, startButton.y, quitButton.x, quitButton.y);
+
+        while (1) {
+            SDL_Event event;
+            while (SDL_PollEvent(&event))
+            {
+                switch (event.type) {
+                    //User requests quit
+                case SDL_QUIT:
+                    return false;
+
+                case SDL_MOUSEBUTTONDOWN: {
+                    //Get mouse position
+                    int x, y;
+                    SDL_GetMouseState(&x, &y);
+                    SDL_Rect mPos = { x - 10, y - 10, 25, 25 };
+                    //std::cout << std::format("mousePos: <{}, {}>\n", mPos.x, mPos.y);
+                    if (checkBlockCollision(mPos, startButton)) {
+                        return true;
+                    }
+                    else if (checkBlockCollision(mPos, quitButton)) {
+                        return false;
+                    }
+                    break;
+                }
+                default:
+                    break;
+                }
+            }
+        }
+    }
+
+    bool resultScreen() {
+        app->prepareScene();
+        render(*app, copter, copterPos.x, copterPos.y);
+
+        SDL_Color textColor = { 0, 0, 0 };
+        //SDL_SetRenderDrawColor(app->renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+        //Score Label
+        LTexture scoreTextTexture;
+        scoreTextTexture.loadFromRenderedText(std::format("Score: {}, Speed: {}", score, xVel), textColor, app->renderer, app->gFont);
+        render(*app, scoreTextTexture, SCREEN_WIDTH / 2, SCREEN_HEIGHT/4 - scoreTextTexture.mHeight/2, NULL);
+        //Retry Button
+        SDL_Rect retryButton;
+        {
+            LTexture retryTextTexture;
+            retryTextTexture.loadFromRenderedText("Retry", textColor, app->renderer, app->gFont);
+            retryButton = { SCREEN_WIDTH / 2, (SCREEN_HEIGHT - retryTextTexture.mHeight) / 2, retryTextTexture.mWidth, retryTextTexture.mHeight };
+            //SDL_RenderFillRect(app->renderer, &retryButton);
+            render(*app, retryTextTexture, retryButton.x, retryButton.y, NULL);
+        }
+        //Quit Button
+        SDL_Rect quitButton;
+        {
+            LTexture quitTextTexture;
+            quitTextTexture.loadFromRenderedText("Quit", textColor, app->renderer, app->gFont);
+            quitButton = { SCREEN_WIDTH / 2, (SCREEN_HEIGHT*3/4 - quitTextTexture.mHeight/2), quitTextTexture.mWidth, quitTextTexture.mHeight };
+            //SDL_RenderFillRect(app->renderer, &quitButton);
+            render(*app, quitTextTexture, quitButton.x, quitButton.y, NULL);
+        }
+        app->presentScene();
+
+        //std::cout << std::format("retryPos <{}, {}>, quitPos <{}, {}>, ", retryButton.x, retryButton.y, quitButton.x, quitButton.y);
+
+        while (1) {
+            SDL_Event event;
+            while (SDL_PollEvent(&event))
+            {
+                switch (event.type) {
+                    //User requests quit
+                case SDL_QUIT:
+                    return false;
+
+                case SDL_MOUSEBUTTONDOWN: {
+                    //Get mouse position
+                    int x, y;
+                    SDL_GetMouseState(&x, &y);
+                    SDL_Rect mPos = { x - 10, y - 10, 25, 25 };
+                    //std::cout << std::format("mousePos: <{}, {}>\n", x, y);
+                    if (checkBlockCollision(mPos, retryButton)) {
+                        //yAcc = INIT_COPTER_SPEED_SHIFT;
+                        //isPaused = false;
+                        return true;
+                    }
+                    else if (checkBlockCollision(mPos, quitButton)) {
+                        return false;
+                    }
+                    break;
+                }
+                default:
+                    break;
+                }
+            }
+        }
     }
 
     void draw() {

@@ -37,15 +37,13 @@ int main(int argc, char* args[]) {
     }
 
     Game g{ &a };
-    g.setupAsset();
-    string retry = "y";
-    while (retry == "Y" || retry == "y") {
+    bool retry = g.mainMenuScreen();
+    while (retry) {
         g.setupParams();
         while (g.tick());
         cout << "Game Over\n";
         g.printState();
-        cout << "Retry?: (Y/N)";
-        cin >> retry;
+        retry = g.resultScreen();
     }
 	return 0;
 }

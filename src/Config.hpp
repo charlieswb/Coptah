@@ -6,6 +6,7 @@ constexpr int SCREEN_WIDTH = 1024;
 constexpr int SCREEN_HEIGHT = 576;
 constexpr int SCREEN_FPS = 60;
 constexpr int SCREEN_TICKS_PER_FRAME = 1000 / SCREEN_FPS;
+const std::string FONT_PATH = R"(C:\Users\Alpha\source\repos\Coptah\resources\lazy.ttf)";
 
 const std::string COPTER_PNG = R"(C:\Users\Alpha\source\repos\Coptah\resources\helicopter-spritesheet.png)";
 constexpr int COPTER_WIDTH = 416;

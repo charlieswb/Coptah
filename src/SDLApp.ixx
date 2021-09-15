@@ -4,6 +4,7 @@ module;
 #include<string>
 #include<SDL2/SDL.h>
 #include<SDL2/SDL_image.h>
+#include<SDL2/SDL_ttf.h>
 #include"Config.hpp"
 
 export module SDLApp;
@@ -12,19 +13,19 @@ export class SDLApp {
 public:
     SDL_Window* window;
     SDL_Renderer* renderer;
-    SDL_Texture* texture;
+    TTF_Font* gFont;
 
     SDLApp() {
         window = nullptr;
         renderer = nullptr;
-        texture = nullptr;
+        gFont = nullptr;
     }
 
     ~SDLApp() {
-        //Free loaded image
-        if (texture) {
-            SDL_DestroyTexture(texture);
-            texture = nullptr;
+        //Free global font
+        if (gFont) {
+            TTF_CloseFont(gFont);
+            gFont = nullptr;
         }
         
         //Destroy renderer
@@ -40,6 +41,7 @@ public:
         }
 
         //Quit SDL subsystems
+        TTF_Quit();
         IMG_Quit();
         SDL_Quit();
     }
@@ -69,6 +71,17 @@ public:
 
         if (!IMG_Init(IMG_INIT_PNG | IMG_INIT_JPG)){
             std::cerr << "SDL_image could not initialize! SDL_image Error: " << IMG_GetError() << '\n';
+            return false;
+        }
+
+        if (TTF_Init() == -1){
+            std::cerr << "SDL_ttf could not initialize! SDL_ttf Error: " << TTF_GetError() << '\n';
+            return false;
+        }
+
+        gFont = TTF_OpenFont(FONT_PATH.c_str(), 28);
+        if (gFont == NULL){
+            std::cerr << "Failed to load lazy font! SDL_ttf Error: " << TTF_GetError() << '\n';
             return false;
         }
 

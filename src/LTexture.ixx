@@ -5,6 +5,7 @@ module;
 #include<format>
 #include<SDL2/SDL.h>
 #include<SDL2/SDL_image.h>
+#include<SDL2/SDL_ttf.h>
 #include"Config.hpp"
 
 import SDLApp;
@@ -70,7 +71,7 @@ public:
         return mTexture != NULL;
     }
 
-    //Loads image at specified path
+    //Loads texture from surface
     bool loadFromSurface(SDL_Surface* surface, SDL_Renderer* renderer) {
         free();
         //The final texture
@@ -97,6 +98,38 @@ public:
 
         return mTexture != NULL;
     }
+
+
+    bool loadFromRenderedText(std::string textureText, SDL_Color textColor, SDL_Renderer* renderer, TTF_Font* gFont)
+    {
+        free();
+
+        //Render text surface
+        SDL_Surface* textSurface = TTF_RenderText_Solid(gFont, textureText.c_str(), textColor);
+        if (textSurface == NULL){
+            std::cerr << "Unable to render text surface! SDL_ttf Error: " << TTF_GetError() <<'\n';
+        } else {
+            //Create texture from surface pixels
+            mTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+            if (mTexture == NULL)
+            {
+                std::cerr << "Unable to create texture from rendered text! SDL Error: " << SDL_GetError() << '\n';
+            }
+            else
+            {
+                //Get image dimensions
+                mWidth = textSurface->w;
+                mHeight = textSurface->h;
+            }
+
+            //Get rid of old surface
+            SDL_FreeSurface(textSurface);
+        }
+
+        //Return success
+        return mTexture != NULL;
+    }
+
 
     //Deallocates texture
     void free() {
