@@ -12,7 +12,7 @@ constexpr double COPTER_SCALE = 0.4;
 
 constexpr int BLOCK_WIDTH = 50;
 constexpr int BLOCK_HEIGHT = 100;
-constexpr int NUMBER_OF_BLOCK = 2;
+constexpr int NUMBER_OF_BLOCK = 3;
 
 constexpr double INIT_GAME_SPEED = 6.0;
 constexpr double INIT_COPTER_SPEED_SHIFT = 0.4;

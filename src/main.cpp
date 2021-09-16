@@ -20,8 +20,8 @@ int main(int argc, char* argv[]) {
     while (retry) {
         g.setupParams();
         while (g.tick());
-        cout << "Game Over\n";
-        g.printState();
+        //cout << "Game Over\n";
+        //g.printState();
         retry = g.resultScreen();
     }
 	return 0;

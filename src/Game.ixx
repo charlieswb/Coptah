@@ -41,8 +41,8 @@ public:
 
         setupAsset();
 
-        copterPos.x = SCREEN_WIDTH / 10;
-        copterPos.y = SCREEN_HEIGHT / 3;
+        copterPos.x = static_cast<int>(SCREEN_WIDTH / 10);
+        copterPos.y = static_cast<int>(SCREEN_HEIGHT / 3);
         copterPos.w = static_cast<int>(COPTER_WIDTH_WO_BLADES * COPTER_SCALE);
         copterPos.h = static_cast<int>(COPTER_HEIGHT * COPTER_SCALE);
 	}
@@ -58,12 +58,15 @@ public:
         isPaused = false;
         score = 0;
         
+        copterPos.y = SCREEN_HEIGHT / 3;
         xVel = INIT_GAME_SPEED;
         yVel = 0;
         yAcc = -INIT_COPTER_SPEED_SHIFT;
         
         blocks.clear();
-        blocks.push_back({ SCREEN_WIDTH, SCREEN_HEIGHT / 3, BLOCK_WIDTH, BLOCK_HEIGHT });
+        blocks.push_back({ SCREEN_WIDTH, static_cast<int>(SCREEN_HEIGHT / 3), BLOCK_WIDTH, BLOCK_HEIGHT });
+
+        SDL_SetWindowTitle(app->window, std::format("Coptah Score: {}", score).c_str());
     }
 
 
@@ -141,22 +144,33 @@ public:
         copterPos.y -= yVel;
 
         //update blocks pos
+        xVel = INIT_GAME_SPEED + (score / 10);
+        /*
         if (xVel != INIT_GAME_SPEED + (score / 10)) {
             xVel = INIT_GAME_SPEED + (score / 10);
-            std::cout << std::format("Speed up to: {}\n", xVel);
+           std::cout << std::format("Speed up to: {}\n", xVel);
         }
+        */
+
 
         while (!blocks.empty() && blocks.front().x - xVel < -blocks.front().w) {
             blocks.pop_front();
-            std::cout << ++score << '\n';
+            ++score;
+            SDL_SetWindowTitle(app->window, std::format("Coptah Score: {}", score).c_str());
         }
+
         for (SDL_Rect& r : blocks) {
             r.x -= xVel;
         }
 
         for (int i = blocks.size(); i < NUMBER_OF_BLOCK; ++i) {
-            SDL_Rect r{ blocks.back().x + SCREEN_WIDTH * 0.8, rnd(), BLOCK_WIDTH, BLOCK_HEIGHT };
-            blocks.push_back(r);
+            //add first block
+            blocks.push_back({ static_cast<int>(blocks.back().x + SCREEN_WIDTH * 0.8), rnd(), BLOCK_WIDTH, BLOCK_HEIGHT });
+
+            //chance to spawn second block
+            if(rnd()%20 < xVel )
+                blocks.push_back({ blocks.back().x, rnd(), BLOCK_WIDTH, BLOCK_HEIGHT });
+
         }
     }
 
