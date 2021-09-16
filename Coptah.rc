@@ -68,13 +68,7 @@ IDB_PNG1                PNG                     "resources\\helicopter-spriteshe
 // TTF
 //
 
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Font
-//
-
-IDR_FONT1               FONT                    "resources\\lazy.ttf"
+IDR_TTF1                TTF                     "resources\\lazy.ttf"
 
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////

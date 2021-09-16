@@ -56,11 +56,6 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ttf1.bin">
-      <Filter>Resource Files</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <Font Include="resources\lazy.ttf" />
   </ItemGroup>
 </Project>

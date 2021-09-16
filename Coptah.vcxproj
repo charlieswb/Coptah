@@ -93,6 +93,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EmbedManagedResourceFile>resources\helicopter-spritesheet.png;resources\lazy.ttf;%(EmbedManagedResourceFile)</EmbedManagedResourceFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -157,9 +158,6 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="resources\helicopter-spritesheet.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ttf1.bin" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="resources\lazy.ttf" />

@@ -2,10 +2,12 @@ module;
 
 #include<iostream>
 #include<string>
+#include<windows.h>
 #include<SDL2/SDL.h>
 #include<SDL2/SDL_image.h>
 #include<SDL2/SDL_ttf.h>
 #include"Config.hpp"
+#include"../resource.h"
 
 export module SDLApp;
 
@@ -79,7 +81,20 @@ public:
             return false;
         }
 
-        gFont = TTF_OpenFont(FONT_PATH.c_str(), 28);
+        HRSRC hResource = FindResource(nullptr, MAKEINTRESOURCEW(IDR_TTF1), TEXT("TTF"));
+        if (!hResource) {
+            std::cerr << "Error Loading Resource TTF" << '\n';
+            return false;
+        }
+        HGLOBAL hData = LoadResource(nullptr, hResource);
+        DWORD dataSize = SizeofResource(nullptr, hResource);
+
+        auto data = LockResource(hData);
+
+        auto sdldata = SDL_RWFromConstMem(data, dataSize);
+
+        gFont = TTF_OpenFontRW(sdldata, 1, 32);
+        //gFont = TTF_OpenFont(FONT_PATH.c_str(), 28);
         if (gFont == NULL){
             std::cerr << "Failed to load lazy font! SDL_ttf Error: " << TTF_GetError() << '\n';
             return false;

@@ -3,6 +3,7 @@ module;
 #include<iostream>
 #include<string>
 #include<format>
+#include<windows.h>
 #include<SDL2/SDL.h>
 #include<SDL2/SDL_image.h>
 #include<SDL2/SDL_ttf.h>
@@ -38,8 +39,6 @@ public:
     //Loads image at specified path
     bool loadFromFile(std::string path, SDL_Renderer* renderer) {
         free();
-        //The final texture
-        SDL_Texture* newTexture = NULL;
 
         //Load image at specified path
         SDL_Surface* loadedSurface = IMG_Load(path.c_str());
@@ -49,24 +48,53 @@ public:
         else {
             //Color key image
             //SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0, 0xFF, 0xFF));
-            
-            //Create texture from surface pixels
-            newTexture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
-            if (newTexture == NULL) {
-                std::cerr << std::format("Unable to create texture from {}! SDL Error: {}\n", path.c_str(), SDL_GetError());
-            }
-            else {
-                //Get image dimensions
-                mWidth = loadedSurface->w;
-                mHeight = loadedSurface->h;
-            }
+            loadFromSurface(loadedSurface, renderer);
+        }
 
-            //Get rid of old loaded surface
-            SDL_FreeSurface(loadedSurface);
+        return mTexture != NULL;
+    }
+
+    //Load texture from text
+    bool loadFromRenderedText(std::string textureText, SDL_Color textColor, SDL_Renderer* renderer, TTF_Font* gFont)
+    {
+        free();
+
+        //Render text surface
+        SDL_Surface* textSurface = TTF_RenderText_Solid(gFont, textureText.c_str(), textColor);
+        if (textSurface == NULL) {
+            std::cerr << "Unable to render text surface! SDL_ttf Error: " << TTF_GetError() << '\n';
+        }
+        else {
+            loadFromSurface(textSurface, renderer);
         }
 
         //Return success
-        mTexture = newTexture;
+        return mTexture != NULL;
+    }
+
+    //Load texture from resource
+    bool loadFromResource(int resourceName, std::string resourceType, SDL_Renderer* renderer) {
+        free();
+        std::wstring ws = std::wstring(resourceType.begin(), resourceType.end());
+        HRSRC hResource = FindResourceW(nullptr, MAKEINTRESOURCEW(resourceName), ws.c_str());
+        HGLOBAL hData = LoadResource(nullptr, hResource);
+        DWORD dataSize = SizeofResource(nullptr, hResource);
+
+        auto data = LockResource(hData);
+
+        auto sdlimg = SDL_RWFromConstMem(data, dataSize);
+
+
+        SDL_Surface* loadedSurface = IMG_Load_RW(sdlimg, 1);
+
+        if (loadedSurface == NULL) {
+            std::cerr << std::format("Unable to load image! SDL_image Error: {}\n", IMG_GetError());
+        }
+        else {
+            //Color key image
+            //SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0, 0xFF, 0xFF));
+            loadFromSurface(loadedSurface, renderer);
+        }
 
         return mTexture != NULL;
     }
@@ -98,38 +126,6 @@ public:
 
         return mTexture != NULL;
     }
-
-
-    bool loadFromRenderedText(std::string textureText, SDL_Color textColor, SDL_Renderer* renderer, TTF_Font* gFont)
-    {
-        free();
-
-        //Render text surface
-        SDL_Surface* textSurface = TTF_RenderText_Solid(gFont, textureText.c_str(), textColor);
-        if (textSurface == NULL){
-            std::cerr << "Unable to render text surface! SDL_ttf Error: " << TTF_GetError() <<'\n';
-        } else {
-            //Create texture from surface pixels
-            mTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
-            if (mTexture == NULL)
-            {
-                std::cerr << "Unable to create texture from rendered text! SDL Error: " << SDL_GetError() << '\n';
-            }
-            else
-            {
-                //Get image dimensions
-                mWidth = textSurface->w;
-                mHeight = textSurface->h;
-            }
-
-            //Get rid of old surface
-            SDL_FreeSurface(textSurface);
-        }
-
-        //Return success
-        return mTexture != NULL;
-    }
-
 
     //Deallocates texture
     void free() {

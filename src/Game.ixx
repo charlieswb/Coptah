@@ -5,6 +5,7 @@ module;
 #include<format>
 #include<SDL2/SDL.h>
 #include"Config.hpp"
+#include"../resource.h"
 
 import SDLApp;
 import LTexture;
@@ -46,7 +47,7 @@ public:
         copterPos.h = static_cast<int>(COPTER_HEIGHT * COPTER_SCALE);
 	}
     void setupAsset() {
-        copter.loadFromFile(COPTER_PNG, app->renderer);
+        copter.loadFromResource(IDB_PNG1, "PNG", app->renderer);
         copter.setClippingRegion(0, 3, 10, COPTER_WIDTH, COPTER_HEIGHT);
         copter.setClippingRegion(1, 3, 160, COPTER_WIDTH, COPTER_HEIGHT);
         copter.setClippingRegion(2, 3, 310, COPTER_WIDTH, COPTER_HEIGHT);
@@ -63,8 +64,6 @@ public:
         
         blocks.clear();
         blocks.push_back({ SCREEN_WIDTH, SCREEN_HEIGHT / 3, BLOCK_WIDTH, BLOCK_HEIGHT });
-
-        std::cout << "Game started! Press 'p' to play...\n";
     }
 
 
