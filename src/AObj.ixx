@@ -1,9 +1,7 @@
 module;
 
 #include<vector>
-#include<string>
 #include<SDL2/SDL.h>
-#include"Config.hpp"
 
 import SDLApp;
 import LTexture;

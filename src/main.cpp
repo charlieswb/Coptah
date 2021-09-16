@@ -1,36 +1,13 @@
 #define SDL_MAIN_HANDLED
 
-#include<ios>
 #include<iostream>
-#include<format>
-#include<string>
-#include<vector>
-#include<deque>
-#include<list>
-#include<stdexcept>
-#include<cassert>
-#include<chrono>
-#include<algorithm>
-#include<filesystem>
-#include<fstream>
-#include<utility>
-#include<functional>
-#include<thread>
-#include<future>
-#include<coroutine>
-#include<cmath>
-#include<SDL2/SDL.h>
-#include<SDL2/SDL_image.h>
-#include<windows.h>
-#include"../resource.h"
-#include"Config.hpp"
 
 import SDLApp;
 import Game;
 
 int Game::instance = 0;
 
-int main(int argc, char* args[]) {
+int main(int argc, char* argv[]) {
 	using namespace std;
     
     SDLApp a;
@@ -49,4 +26,3 @@ int main(int argc, char* args[]) {
     }
 	return 0;
 }
-

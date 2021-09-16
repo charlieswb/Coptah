@@ -1,7 +1,5 @@
 #pragma once
 
-#include<string>
-
 constexpr int SCREEN_WIDTH = 1024;
 constexpr int SCREEN_HEIGHT = 576;
 constexpr int SCREEN_FPS = 60;
